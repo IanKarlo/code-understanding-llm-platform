@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <title>Code Understanding LLM</title>
+    <link rel="stylesheet" href="{{styleUri}}" />
+  </head>
+  <body>
+    <h1>LLM Code Understanding</h1>
+
+    <main id="chat-container">
+      <!-- Chat messages will be dynamically added here -->
+    </main>
+
+    <div class="button-container">
+      <button class="btn" id="explainSelection">
+        📌 Explicar Código Selecionado
+      </button>
+      <button class="btn" id="explainFile">📄 Explicar Arquivo</button>
+      <button class="btn" id="explainRepo">📂 Explicar Repositório</button>
+    </div>
+
+    <div class="input-container">
+      <textarea
+        id="questionInput"
+        placeholder="Pergunte para o modelo algo sobre a linguagem ou o código"
+      ></textarea>
+      <button class="send-btn" id="sendQuestion">🚀 Enviar</button>
+    </div>
+
+    <script src="{{scriptUri}}"></script>
+  </body>
+</html>
