@@ -17,7 +17,20 @@ export class LangChainService {
     async explainCode(code: string): Promise<MessageContent> {
         try {
             const response = await this.model.invoke(
-                `Please provide a detailed explanation of this code snippet. Include the purpose of the code, a breakdown of its components, and any important concepts or functions used. Do not repeat the code in your explanation.\n\n${code}`
+                `Por favor, forneça uma análise abrangente deste trecho de código. Sua explicação deve incluir:
+                1. Propósito geral e funcionalidade do trecho
+                2. Funções importantes, variáveis e seus papéis
+
+                Não repita nenhum código em sua explicação.
+                Caso você não encontre alguma das regras acima, não adicione nada.
+                Escreva o texto de forma mais direta, sem dividir muito em tópicos.
+                
+                Aqui está o trecho de código:
+                
+                ${code}
+                
+                A resposta da explicação deve estar em formato markdown e em PORTUGUÊS.
+                `
             );
             return response.content;
         } catch (error) {
@@ -27,22 +40,26 @@ export class LangChainService {
     }
 
     async explainFile(fileContent: string): Promise<MessageContent> {
+
         try {
             const response = await this.model.invoke(
-                `Please provide a comprehensive analysis of this file. Your explanation should include:
-                1. Overall purpose and functionality of the file
-                2. Key components and their relationships
-                3. Important classes, functions, and their purposes
-                4. Any notable patterns or design decisions
-                5. Dependencies and their usage
-                6. Potential areas of interest or complexity
+                `Por favor, forneça uma análise abrangente deste arquivo. Sua explicação deve incluir:
+                1. Propósito geral e funcionalidade do trecho
+                2. Funções importantes, variáveis e seus papéis
 
-                Do not repeat any code in your explanation.
 
-                Here is the file content:
+                Não repita nenhum código em sua explicação.
+                Caso você não encontre alguma das regras acima, não adicione nada.
+                Escreva o texto de forma mais direta, sem dividir muito em tópicos.
 
-                ${fileContent}`
+                Aqui está o conteúdo do arquivo:
+
+                ${fileContent}
+                
+                A resposta da explicação deve estar em formato markdown e em PORTUGUÊS.
+                `
             );
+
             return response.content;
         } catch (error) {
             console.error('Error in LangChain service:', error);
@@ -53,22 +70,22 @@ export class LangChainService {
     async explainMultipleFiles(filesContent: string): Promise<MessageContent> {
         try {
             const response = await this.model.invoke(
-                `Please analyze this multi-file codebase. Each file is marked with '## File X' at the start and '#endfile' at the end. 
+                `Por favor, faça uma analise abrangente desta base de código com múltiplos arquivos. Cada arquivo está marcado com '## File X' no início e '#endfile' no final.
                 
-                Provide a detailed explanation that includes:
-                1. Overall architecture and purpose of the codebase
-                2. Analysis of each file's role and responsibility
-                3. Key interactions and dependencies between files
-                4. Important classes, functions, and their relationships across files
-                5. Notable design patterns or architectural decisions
-                6. Data flow between components
-                7. Any potential improvements or areas of interest
+                Forneça uma explicação detalhada que inclua:
+                1. Propósito geral e funcionalidade do trecho
+                2. Funções importantes, variáveis e seus papéis
 
-                Do not include any code snippets in your explanation.
-
-                Here are the files:
-
-                ${filesContent}`
+                Não inclua nenhum trecho de código em sua explicação.
+                Caso você não encontre alguma das regras acima, não adicione nada.
+                Escreva o texto de forma mais direta, sem dividir muito em tópicos.
+                
+                Aqui estão os arquivos:
+                
+                ${filesContent}
+                
+                A resposta da explicação deve estar em formato markdown e em PORTUGUÊS.
+                `
             );
             return response.content;
         } catch (error) {
@@ -80,14 +97,42 @@ export class LangChainService {
     async askQuestion(question: string): Promise<MessageContent> {
         try {
             const response = await this.model.invoke(
-                `Please provide a clear and detailed answer to the following question. If the question is about code or technical concepts, include relevant examples and explanations.
+                `Por favor, forneça uma resposta clara e detalhada para a seguinte pergunta. Se a pergunta for sobre código ou conceitos técnicos, inclua exemplos relevantes e explicações.
 
-                Question: ${question}`
+                Pergunta: ${question}`
             );
             return response.content;
         } catch (error) {
             console.error('Error in LangChain service:', error);
             throw new Error('Failed to process question');
+        }
+    }
+
+    async askRepo(filesContent: string, question: string): Promise<MessageContent> {
+        try {
+            const response = await this.model.invoke(
+                `Por favor, analise de forma abrangente a seguinte base de código e responda à pergunta com base em seu conteúdo. Cada arquivo na base de código está marcado com '## File X' no início e '#endfile' no final.
+
+                Primeiro, entenda a base de código:
+                1. Arquitetura geral e propósito
+                2. Componentes principais e seus relacionamentos
+                3. Funcionalidades e características importantes
+
+                Em seguida, forneça uma resposta detalhada à pergunta, referenciando especificamente partes relevantes da base de código.
+                A resposta deve estar em formato markdown e em português.
+                Caso você não encontre alguma das regras acima, não adicione nada.
+
+                Base de código:
+                ${filesContent}
+
+                Pergunta: ${question}
+
+                Por favor, forneça uma resposta abrangente que aborde diretamente a pergunta enquanto aproveita seu entendimento da base de código fornecida.`
+            );
+            return response.content;
+        } catch (error) {
+            console.error('Error in LangChain service:', error);
+            throw new Error('Failed to process repository question');
         }
     }
 }

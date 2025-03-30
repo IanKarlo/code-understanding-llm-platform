@@ -93,3 +93,11 @@ button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.clear-btn {
+  background-color: #fa2e2ecb;
+}
+
+.clear-btn:hover {
+  background-color: #a70000;
+}

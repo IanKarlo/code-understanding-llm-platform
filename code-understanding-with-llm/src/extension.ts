@@ -149,6 +149,56 @@ class CodeUnderstandingProvider implements vscode.WebviewViewProvider {
           });
 
           break;
+        
+        case 'askRepo':
+          const folders2 = vscode.workspace.workspaceFolders;
+
+          if (!folders2 || folders2.length === 0) {
+            vscode.window.showErrorMessage("Nenhum repositório está aberto.");
+            return;
+          }
+
+          const folderUri2 = folders2[0].uri.fsPath;
+
+          this._view?.webview.postMessage({
+            command: "repoLoading",
+          });
+
+          const files2 = getAllFilesRecursively(folderUri2);
+
+          if (files2.length === 0) {
+            vscode.window.showWarningMessage(
+              "Nenhum arquivo relevante encontrado no repositório."
+            );
+            return;
+          }
+
+          const repoContent2 = files2
+            .map((filePath) => {
+              try {
+                const content = fs.readFileSync(filePath, "utf8");
+                const relativePath = path.relative(folderUri2, filePath);
+                const language = path.extname(filePath).slice(1); // Ex: "ts", "js"
+                return `### ${relativePath}\n\n\`\`\`${language}\n${content}\n\`\`\``;
+              } catch (err) {
+                return `### ${filePath}\n\nErro ao ler o arquivo.`;
+              }
+            })
+            .join("\n\n");
+
+          if (!repoContent2.trim()) {
+            vscode.window.showWarningMessage(
+              "Não foi possível ler o conteúdo dos arquivos do repositório."
+            );
+            return;
+          }
+
+          this._view?.webview.postMessage({
+            command: "sendAskRepoToBackend",
+            text: repoContent2,
+          });
+
+          break;
       }
     });
   }
@@ -176,7 +226,7 @@ class CodeUnderstandingProvider implements vscode.WebviewViewProvider {
   }
 }
 
-const extensions = [".ts", ".js", ".json", ".py", ".java"];
+const extensions = [".ts", ".js", ".json", ".py", ".java", ".md"];
 
 function getAllFilesRecursively(dir: string): string[] {
   let results: string[] = [];

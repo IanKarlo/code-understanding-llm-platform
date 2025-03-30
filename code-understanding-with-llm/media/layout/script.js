@@ -1,4 +1,4 @@
-const APP_KEY = "YOUR_API_KEY_HERE";
+const APP_KEY = "";
 
 document.getElementById("explainSelection").addEventListener("click", () => {
   vscode.postMessage({ command: "explainSelection" });
@@ -15,6 +15,22 @@ document.getElementById("explainRepo").addEventListener("click", () => {
 document.getElementById("sendQuestion").addEventListener("click", () => {
   sendQuestion();
 });
+
+document.getElementById("askRepo").addEventListener("click", () => {
+  const input = document.getElementById("questionInput");
+  const questionText = input.value.trim();
+
+  if (questionText.length === 0) {
+    appendResposta("Por favor, digite uma pergunta.", true);
+    return;
+  }
+  
+  vscode.postMessage({ command: "askRepo" });
+});
+
+document.getElementById("clear").addEventListener("click", () => {
+  document.getElementById('chat-container').innerHTML = ""
+})
 
 document
   .getElementById("questionInput")
@@ -38,7 +54,7 @@ function sendQuestion() {
     input.disabled = true;
     axios
       .post(
-        "http://localhost:3003/api/ask",
+        "http://localhost:3000/api/ask",
         {
           question: questionText,
         },
@@ -150,9 +166,9 @@ window.addEventListener("message", (event) => {
 
       axios
         .post(
-          "http://localhost:3003/api/ask",
+          "http://localhost:3000/api/explain-file",
           {
-            question: fileContent,
+            fileContent,
           },
           {
             headers: {
@@ -186,9 +202,9 @@ window.addEventListener("message", (event) => {
 
       axios
         .post(
-          "http://localhost:3003/api/ask",
+          "http://localhost:3000/api/explain",
           {
-            question: selectedText,
+            code: selectedText,
           },
           {
             headers: {
@@ -223,9 +239,9 @@ window.addEventListener("message", (event) => {
 
       axios
         .post(
-          "http://localhost:3003/api/ask",
+          "http://localhost:3000/api/explain-multiple",
           {
-            question: message.text,
+            filesContent: message.text,
           },
           {
             headers: {
@@ -248,6 +264,53 @@ window.addEventListener("message", (event) => {
         });
 
       break;
+    case 'sendAskRepoToBackend':
+      const input = document.getElementById("questionInput");
+      const questionText = input.value.trim();
+      
+      showLoadingRepo();
+      appendSubtitle("Busca nas informações do repositório completa.");
+      appendResposta(
+        "Enviada pergunta ao repositório.",
+        true
+      );
+
+      appendSubtitle("Pergunta:");
+      appendResposta(questionText);
+      input.disabled = true;
+      showLoading(true);
+
+      axios
+        .post(
+          "http://localhost:3000/api/ask-repo",
+          {
+            question: questionText,
+            filesContent: message.text
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "x-api-key": APP_KEY,
+            },
+          }
+        )
+        .then((response) => {
+          const resposta = response.data.answer;
+          appendSubtitle("Resposta:");
+          appendResposta(resposta, true);
+        })
+        .catch((error) => {
+          appendResposta("❌ Erro ao fazer a pergunta.");
+        })
+        .finally(() => {
+          toggleButtons(true);
+          showLoading(false);
+          input.value = "";
+          input.disabled = false;
+        });
+        
+        break;
+
     case "repoLoading":
       showLoadingRepo();
       toggleButtons(false);

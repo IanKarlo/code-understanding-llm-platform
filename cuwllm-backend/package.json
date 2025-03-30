@@ -21,7 +21,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "langchain": "^0.3.19"
+    "langchain": "^0.3.19",
+    "nodemon": "^3.1.9"
   },
   "devDependencies": {
     "@types/axios": "^0.14.4",

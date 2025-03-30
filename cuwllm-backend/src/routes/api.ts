@@ -18,7 +18,7 @@ router.post('/explain', async (req, res) => {
 
     try {
         const explanation = await langChainService.explainCode(code);
-        res.json({ explanation });
+        res.json({ answer: explanation });
     } catch (error) {
         console.error('Error processing request:', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -36,7 +36,7 @@ router.post('/explain-file', async (req, res) => {
 
     try {
         const explanation = await langChainService.explainFile(fileContent);
-        res.json({ explanation });
+        res.json({ answer: explanation });
     } catch (error) {
         console.error('Error processing request:', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -54,7 +54,7 @@ router.post('/explain-multiple', async (req, res) => {
 
     try {
         const explanation = await langChainService.explainMultipleFiles(filesContent);
-        res.json({ explanation });
+        res.json({ answer: explanation });
     } catch (error) {
         console.error('Error processing request:', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -72,6 +72,29 @@ router.post('/ask', async (req, res) => {
 
     try {
         const answer = await langChainService.askQuestion(question);
+        res.json({ answer });
+    } catch (error) {
+        console.error('Error processing request:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// Endpoint to handle questions about a repository
+router.post('/ask-repo', async (req, res) => {
+    const { filesContent, question } = req.body;
+
+    if (!filesContent) {
+        res.status(400).json({ error: 'Repository files content is required in the request body' });
+        return;
+    }
+
+    if (!question) {
+        res.status(400).json({ error: 'Question is required in the request body' });
+        return;
+    }
+
+    try {
+        const answer = await langChainService.askRepo(filesContent, question);
         res.json({ answer });
     } catch (error) {
         console.error('Error processing request:', error);
