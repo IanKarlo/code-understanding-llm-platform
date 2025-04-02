@@ -14,3 +14,20 @@ Para o experimento, esperamos realiza-lo da seguinte forma:
   - Será dado para o voluntário, uma base de código relacionado a um contexto que não faz parte do contexto comum de trablho do mesmo. Com isso, ele deverá, utilizando a plataforma criada, responder algumas perguntas pre definidas sobre a base de código.
   - Posteriormente, será dado uma outra base de código, para o voluntário responder perguntas similares, porém, dessa vez, sem a assistencia da plafatorma, podendo apenas utilizar mecanismos de busca padrão da internet.
 - Com os resultados obtidos, esperamos ter uma ideia final de como os modelos de linguagem podem ajudar no entendimento de código para desenvolvedores.
+
+
+## Execução do Projeto:
+
+### Backend
+Para executar o backend, basta executar o comando `npm install` no diretório do projeto e depois criar um arquivo env com os valores:
+```
+PORT=3000
+API_KEY=a3cdaa00-22ec-4504-a713-2422b719aeed
+GOOGLE_API_KEY=<GEMINI_2.0_FLASH_API_KEY>
+```
+Por fim execute `npm run dev` e o servidor deve ser iniciado.
+
+Obs: Basta apenas mudar o valor da api key do gemini, já que os outros valores estão "hard coded" na extensão.
+
+### Extensão
+Basta apenas abrir o arquivo `extension.ts` e apetar o botão f5, caso apareça alguma mensagem, apenas confirme e o vscode deve abrir uma nova janela que tem a extensão instalada. Basta então abrir alguma pasta com código e utilizar a extensão.

@@ -1,4 +1,4 @@
-const APP_KEY = "";
+const APP_KEY = "a3cdaa00-22ec-4504-a713-2422b719aeed";
 
 document.getElementById("explainSelection").addEventListener("click", () => {
   vscode.postMessage({ command: "explainSelection" });
